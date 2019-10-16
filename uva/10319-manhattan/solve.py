@@ -53,7 +53,7 @@ def path_adj(adj, c1, c2):
             return True
 
         if a in seen:
-            return
+            return False
 
         seen.add(a)
 
@@ -66,7 +66,7 @@ def path_adj(adj, c1, c2):
     return dfs(c1)
 
 def is_2sat_solvable(clauses):
-    adj = defaultdict(set) # adjacency matrix
+    adj = defaultdict(set) # adjacency "list"
     for (c1, c2) in clauses:
         adj[(not c1[0], c1[1])].add(c2)
         adj[(not c2[0], c2[1])].add(c1)
