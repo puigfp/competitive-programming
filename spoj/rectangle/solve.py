@@ -1,8 +1,7 @@
 import functools
 from collections import defaultdict
 
-# lower, upper = int(input()), int(input())
-lower, upper = 1, 15
+lower, upper = int(input()), int(input())
 
 factorizations = defaultdict(list)
 for i in range(lower, upper+1):
@@ -56,3 +55,5 @@ def solve():
 for (a, b) in solve():
     print(a, b)
 
+# without this, if the program didn't output anything, the test doesn't pass on SPOJ
+print()
