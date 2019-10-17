@@ -14,13 +14,13 @@ Let's write down what the discussion between Avery and Pat means:
 
   $\mathcal{P_0}(A)$: There are multiple ways (at least $2$) to factorize $A$ using only factors from $[L, U]$.
 
-  
+
 
 - *Pat*: I knew that.
 
   $\mathcal{P_1}(P)$: $\forall L \leq w \leq h \leq U$, $w + h = P \implies \mathcal{P_0}(wh)$ is true.
 
-  
+
 
 - *Avery*: Now I know what they are.
 
@@ -28,7 +28,7 @@ Let's write down what the discussion between Avery and Pat means:
 
   If $\mathcal{P_2}(A)$ is true, let's call $(w, h) = f_2(A)$ the unique values for $w$ and $h$.
 
-  
+
 
 - *Pat*: I know too.
 
@@ -40,7 +40,7 @@ Let's write down what the discussion between Avery and Pat means:
 
 The idea of the algorithm is to implement those propositions in Python and then do a naive for loop to find all the $P \in [2L, 2U]$ for which $\mathcal{P_3}(P)$ is true (and the associated values for $(w, h) = f_3(P)$).
 
-We heavily rely on memoization to avoid recomputing the same values multiple times. We calculating the complexity, we consider that each function runs exactly once for every possible input.
+We heavily rely on memoization to avoid recomputing the same values multiple times. When calculating the complexity, we consider that each function runs exactly once for every possible input.
 
 *Trick*: Two steps require to perform factorization (computing $\mathcal{P_0}(A)$ and $\mathcal{P_2}(A)$). We compute the factorizations for all possibles values of $A$ at the beginning of the algorithm (cost: $O(U^2)$) to make factorization a $O(1)$ operation.
 
@@ -50,7 +50,7 @@ Useful:
 
 - we have
 
-  - $L \leq w \leq h \leq U$ 
+  - $L \leq w \leq h \leq U$
   - $w + h = P$
 
 - we can show
