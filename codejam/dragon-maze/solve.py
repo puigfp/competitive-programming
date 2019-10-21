@@ -4,13 +4,14 @@ def solve(maze, start, finish):
     """
     Solve is a BFS.
 
-    At the beginning of iteration i:
-        - current_step keys are all the cells whose whose shortest path from the
-            entrance is i cells long.
-        - current_step[cell] contains the maximum amount of power we can gather on our
-            way to a given cell
-        - seen contains all the cells whose shortest path from the entrance is j cells
-            long with j <= i
+    We use the state variable to keep track of the shortest paths.
+
+    state[i][j][0] =
+        length of shortest path from start to (i, j), None if (i, j) hasn't been seen yet
+
+    state[i][j][1] =
+        maximum power we can gather by going from start to (i, j) following one of the
+        shortest paths, None if (i, j) hasn't been seen yet
     """
     state = [
         [
