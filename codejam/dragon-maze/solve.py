@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import deque
 
 def solve(maze, start, finish):
     """
@@ -12,42 +12,47 @@ def solve(maze, start, finish):
         - seen contains all the cells whose shortest path from the entrance is j cells
             long with j <= i
     """
-    current_step = {
-        start: maze[start[0]][start[1]]
-    }
-    next_step = dict()
-    seen = { start }
+    state = [
+        [
+            (None, None)
+            for _ in range(len(maze[0]))
+        ]
+        for _ in range(len(maze))
+    ]
 
-    ok = lambda cell: \
+    q = deque([ start ])
+    state[start[0]][start[1]] = (0, maze[start[0]][start[1]])
+
+    ok = lambda cell, k: \
         0 <= cell[0] < len(maze) and \
         0 <= cell[1] < len(maze[0]) and \
         maze[cell[0]][cell[1]] >= 0 and \
-        cell not in seen
+        (state[cell[0]][cell[1]][0] is None or state[cell[0]][cell[1]][0] == k)
 
-    def next_cells(cell):
+    def next_cells(cell, k):
         deltas = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         plus = lambda cell, delta: tuple(e1 + e2 for (e1, e2) in zip (cell, delta))
 
         for delta in deltas:
             next_cell = plus(cell, delta)
-            if ok(next_cell):
+            if ok(next_cell, k):
                 yield next_cell
 
-    while current_step:
-        if finish in current_step:
-            return current_step[finish]
-
-        for cell, power in current_step.items():
-            for next_cell in next_cells(cell):
-                next_step[next_cell] = max(
-                    next_step.get(next_cell, float('-inf')),
-                    power + maze[next_cell[0]][next_cell[1]],
+    while q:
+        cell = q.popleft()
+        k, power = state[cell[0]][cell[1]]
+        for next_cell in next_cells(cell, k + 1):
+            if state[next_cell[0]][next_cell[1]][0] is None:
+                q.append(next_cell)
+            state[next_cell[0]][next_cell[1]] = (
+                k + 1,
+                max(
+                    state[next_cell[0]][next_cell[1]][1] or float('-inf'),
+                    power + maze[next_cell[0]][next_cell[1]]
                 )
+            )
 
-        current_step, next_step = next_step, dict()
-        seen = seen.union(set(current_step))
-
-    return None
+    return state[finish[0]][finish[1]][1]
 
 T = int(input())
 for i in range(T):
