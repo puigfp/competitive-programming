@@ -139,23 +139,22 @@ def sort_segments(segments):
 
 
 def topological_sort(adj):
-    seen = set()
+    inbound_edges = {i:0 for i in range(len(adj))}
+    for i in range(len(adj)):
+        for j in adj[i]:
+            inbound_edges[j] += 1
+
+    no_inbound_edges = deque([i for i, c in inbound_edges.items() if c == 0])
     sort = []
 
-    def bfs(i):
-        if i in seen:
-            return
-        seen.add(i)
-
+    while no_inbound_edges:
+        i = no_inbound_edges.popleft()
         for j in adj[i]:
-            bfs(j)
-
+            inbound_edges[j] -= 1
+            if inbound_edges[j] == 0:
+                no_inbound_edges.append(j)
         sort.append(i)
 
-    for i in range(len(adj)):
-        bfs(i)
-
-    sort.reverse()
     return sort
 
 def test_topological_sort():
@@ -167,7 +166,7 @@ def test_topological_sort():
         [0],
         [],
     ]
-    assert [5, 1, 3, 2, 4, 0] == topological_sort(adj)
+    assert [1, 5, 3, 2, 4, 0] == topological_sort(adj)
 
 
 def solve(segments):
