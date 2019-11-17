@@ -77,27 +77,6 @@ def apply_updates(x0, y0, k, tree):
         tree[k] = node(tree[2 * k].sum + tree[2 * k + 1].sum, tree[k].updates)
 
 
-def test_segment_tree():
-    tree = init_segment_tree([1] * 6)
-    assert 3 == query(0, 3, tree)
-    assert 6 == query(0, 8, tree)
-    assert 0 == query(6, 8, tree)
-
-    add_update(0, 6, 2, tree)
-    assert 6 == query(0, 3, tree)
-    assert 12 == query(0, 8, tree)
-
-    add_update(0, 8, 0, tree)
-    add_update(0, 2, 10, tree)
-    add_update(4, 6, -12, tree)
-    add_update(0, 6, 1, tree)
-    add_update(0, 1, 3, tree)
-    add_update(2, 6, -1, tree)
-    assert 3 == query(0, 3, tree)
-    assert 0 == query(0, 6, tree)
-    assert 1 == query(1, 2, tree)
-
-
 def read_segments():
     # reads problem input
     n = int(input())
@@ -114,11 +93,6 @@ def is_above(segment1, segment2):
     (x1, y1), (x2, y2) = segment1
     (x, y) = segment2[0]
     return (y2 - y1) / (x2 - x1) * (x - x1) + y1 >= y
-
-
-def test_is_above():
-    assert True == is_above(((3, 8), (7, 7)), ((5, 5), (9, 3)))
-    assert False == is_above(((1, 7), (5, 6)), ((3, 8), (7, 7)))
 
 
 def sort_segments(segments):
@@ -139,7 +113,7 @@ def sort_segments(segments):
 
 
 def topological_sort(adj):
-    inbound_edges = {i:0 for i in range(len(adj))}
+    inbound_edges = {i: 0 for i in range(len(adj))}
     for i in range(len(adj)):
         for j in adj[i]:
             inbound_edges[j] += 1
@@ -156,17 +130,6 @@ def topological_sort(adj):
         sort.append(i)
 
     return sort
-
-def test_topological_sort():
-    adj =[
-        [],
-        [2, 3, 4, 0],
-        [4],
-        [2, 4],
-        [0],
-        [],
-    ]
-    assert [1, 5, 3, 2, 4, 0] == topological_sort(adj)
 
 
 def solve(segments):
