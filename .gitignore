@@ -1,11 +1,10 @@
-# pipenv virtualenv
-/.venv/
-
 # macOS stuff
 .DS_Store
 
-# pytest cache
-.pytest_cache
+# python stuff
+/.venv/
+.pytest_cache/
+__pycache__/
 
 # code coverage data
 .coverage
