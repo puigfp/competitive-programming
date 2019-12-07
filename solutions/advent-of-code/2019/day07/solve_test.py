@@ -1,3 +1,5 @@
+import copy
+
 from solve import execute, solve_part1, solve_part2
 
 
@@ -37,7 +39,7 @@ def test_execute():
     ]
 
     for program, input_, output in tests:
-        assert execute(program, input_) == output
+        assert execute([copy.copy(program), 0, 0], input_)[1] == output
 
 
 def test_solve_part1():
@@ -50,6 +52,7 @@ def test_solve_part1():
     ]
     for program, highest_signal in tests:
         assert solve_part1(program) == highest_signal
+
 
 def test_solve_part2():
     tests = [
