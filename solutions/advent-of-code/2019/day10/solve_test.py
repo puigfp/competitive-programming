@@ -125,7 +125,7 @@ def test_solve_part2():
     ###.##.####.##.#..##"""
     grid = parse_grid(grid)
     (x, y) = solve_part1(grid)
-    popped = solve_part2(grid, 13, 11)
+    popped = solve_part2(grid, x, y)
     assert len(popped) == 299
     assert popped[0] == (12, 11)
     assert popped[1] == (1, 12)
