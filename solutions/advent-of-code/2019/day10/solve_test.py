@@ -2,6 +2,7 @@ import math
 
 from solve import parse_grid, seeable, solve_part1, solve_part2, angle
 
+
 def test_angle():
     tests = [
         (0, 1),
@@ -13,10 +14,13 @@ def test_angle():
         (0, -1),
         (-1, -1),
         (-1, 0),
-        (-1, 1)
+        (-1, 1),
     ]
     for i in range(1, len(tests)):
-        assert angle(tests[i-1][0], tests[i-1][1]) <= angle(tests[i][0], tests[i][1])
+        assert angle(tests[i - 1][0], tests[i - 1][1]) <= angle(
+            tests[i][0], tests[i][1]
+        )
+
 
 def test_solve_part1():
     tests = [
@@ -89,13 +93,14 @@ def test_solve_part1():
             #.#.#.#####.####.###
             ###.##.####.##.#..##""",
             210,
-        )
+        ),
     ]
 
     for (grid, solution) in tests:
         grid = parse_grid(grid)
         (x, y) = solve_part1(grid)
         assert seeable(grid, x, y) == solution
+
 
 def test_solve_part2():
     grid = """.#..##.###...#######

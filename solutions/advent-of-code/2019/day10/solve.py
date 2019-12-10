@@ -23,25 +23,24 @@ def seeable(grid, x1, y1):
 
 def solve_part1(grid):
     return max(
-        ((x, y)
-        for x in range(len(grid))
-        for y in range(len(grid[0]))
-        if grid[x][y]),
-        key = lambda pos: seeable(grid, pos[0], pos[1])
+        ((x, y) for x in range(len(grid)) for y in range(len(grid[0])) if grid[x][y]),
+        key=lambda pos: seeable(grid, pos[0], pos[1]),
     )
+
 
 def angle(x, y):
     # an angle is made of 2 parts
     # - the quadrant of the plane it's in (between 1 and 4)
     # - the angle itself, between 0 and infinite
     if x >= 0 and y > 0:
-        return (1, abs(x/y))
+        return (1, abs(x / y))
     elif x > 0 and y <= 0:
-        return (2, abs(y/x))
+        return (2, abs(y / x))
     elif x <= 0 and y < 0:
-        return (3, abs(x/y))
+        return (3, abs(x / y))
     elif x < 0 and y >= 0:
-        return (4, abs(y/x))
+        return (4, abs(y / x))
+
 
 def sorted_asteroids(grid, x1, y1):
     asteroids = dict()
@@ -49,18 +48,19 @@ def sorted_asteroids(grid, x1, y1):
     for x2 in range(len(grid)):
         for y2 in range(len(grid[0])):
             if (x1, y1) != (x2, y2) and grid[x2][y2]:
-                x, y = x2-x1, y2-y1
+                x, y = x2 - x1, y2 - y1
                 a = angle(y, -x)
                 a = (a[0], int(a[1] * 10e10))
                 if a not in asteroids:
                     asteroids[a] = []
-                asteroids[a].append((abs(x2-x1)+abs(y2-y1), (x2, y2)))
+                asteroids[a].append((abs(x2 - x1) + abs(y2 - y1), (x2, y2)))
 
     for l in asteroids.values():
         l.sort()
         l.reverse()
 
     return asteroids
+
 
 def solve_part2(grid, x, y):
     asteroids = sorted_asteroids(grid, x, y)
