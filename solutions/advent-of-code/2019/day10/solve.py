@@ -65,14 +65,12 @@ def sorted_asteroids(grid, x1, y1):
 def solve_part2(grid, x, y):
     asteroids = sorted_asteroids(grid, x, y)
     angles = sorted(asteroids)
-    i = 1
     popped = []
     while max(len(l) for l in asteroids.values()) > 0:
         for a in angles:
             if len(asteroids[a]) > 0:
                 dist, coords = asteroids[a].pop()
                 popped.append(coords)
-                i += 1
 
     return popped
 
