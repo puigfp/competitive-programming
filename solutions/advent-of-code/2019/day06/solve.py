@@ -1,31 +1,31 @@
-from collections import deque
-import functools
+from collections import deque, defaultdict
 
 
 def lines_to_graph_part1(lines):
-    graph = dict()
+    graph = defaultdict(lambda: [])
     for line in lines:
         a, b = line.strip().split(")")
-        graph[a] = graph.get(a, [])
-        graph[b] = graph.get(b, [])
-        graph[b].append(a)
+        graph[a].append(b)
     return graph
 
 
 def solve_part1(graph):
-    @functools.lru_cache(maxsize=None)
-    def count_children(node):
-        return len(graph[node]) + sum(count_children(child) for child in graph[node])
+    q = deque([("COM", 0)])
+    total_parents = 0
 
-    return sum(count_children(node) for node in graph)
+    while q:
+        node, parents = q.popleft()
+        total_parents += parents
+        for child in graph[node]:
+            q.append((child, parents + 1))
+
+    return total_parents
 
 
 def lines_to_graph_part2(lines):
-    graph = dict()
+    graph = defaultdict(lambda: [])
     for line in lines:
         a, b = line.strip().split(")")
-        graph[a] = graph.get(a, [])
-        graph[b] = graph.get(b, [])
         graph[b].append(a)
         graph[a].append(b)
     return graph
