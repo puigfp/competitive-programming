@@ -2,7 +2,12 @@ import math
 
 
 def parse_grid(s):
-    return [[char == "#" for char in line.strip()] for line in s.splitlines()]
+    return [
+        (x, y)
+        for x, line in enumerate(s.splitlines())
+        for y, char in enumerate(line.strip())
+        if char == "#"
+    ]
 
 
 def direction(x1, y1, x2, y2):
@@ -14,17 +19,15 @@ def direction(x1, y1, x2, y2):
 
 def seeable(grid, x1, y1):
     directions = set()
-    for x2 in range(len(grid)):
-        for y2 in range(len(grid[0])):
-            if (x1, y1) != (x2, y2) and grid[x2][y2]:
-                directions.add(direction(x1, y1, x2, y2))
+    for (x2, y2) in grid:
+        if (x1, y1) != (x2, y2):
+            directions.add(direction(x1, y1, x2, y2))
     return len(directions)
 
 
 def solve_part1(grid):
     return max(
-        ((x, y) for x in range(len(grid)) for y in range(len(grid[0])) if grid[x][y]),
-        key=lambda pos: seeable(grid, pos[0], pos[1]),
+        ((x, y) for (x, y) in grid), key=lambda pos: seeable(grid, pos[0], pos[1])
     )
 
 
@@ -45,15 +48,14 @@ def angle(x, y):
 def sorted_asteroids(grid, x1, y1):
     asteroids = dict()
 
-    for x2 in range(len(grid)):
-        for y2 in range(len(grid[0])):
-            if (x1, y1) != (x2, y2) and grid[x2][y2]:
-                x, y = x2 - x1, y2 - y1
-                a = angle(y, -x)
-                a = (a[0], int(a[1] * 10e10))
-                if a not in asteroids:
-                    asteroids[a] = []
-                asteroids[a].append((abs(x2 - x1) + abs(y2 - y1), (x2, y2)))
+    for (x2, y2) in grid:
+        if (x1, y1) != (x2, y2):
+            x, y = x2 - x1, y2 - y1
+            a = angle(y, -x)
+            a = (a[0], int(a[1] * 10e10))
+            if a not in asteroids:
+                asteroids[a] = []
+            asteroids[a].append((abs(x) + abs(y), (x2, y2)))
 
     for l in asteroids.values():
         l.sort()
