@@ -1,0 +1,2 @@
+- each coordinate is independent
+- each state has a unique parent, so the first repetition is necessarily a repetition of state 0
