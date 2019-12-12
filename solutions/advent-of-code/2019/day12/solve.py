@@ -1,3 +1,4 @@
+from copy import copy
 from functools import reduce
 from math import gcd
 
@@ -48,15 +49,10 @@ def solve_part1(positions, steps=1000):
 
 
 def find_repeat(positions):
-    states = set()
     velocities = [0 for _ in range(len(positions))]
+    state_0 = copy(positions), copy(velocities)
+    steps = 0
     while True:
-        # store current state in state history
-        save = (tuple(positions), tuple(velocities))
-        if save in states:
-            return len(states)
-        states.add(save)
-
         # update velocities
         for i in range(len(positions)):
             for j in range(len(positions)):
@@ -71,6 +67,12 @@ def find_repeat(positions):
         # update positions
         for i in range(len(positions)):
             positions[i] += velocities[i]
+
+        steps += 1
+
+        # stop condition
+        if (positions, velocities) == state_0:
+            return steps
 
 
 def solve_part2(positions):
