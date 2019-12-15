@@ -4,7 +4,7 @@ directions = {"R": (0, 1), "U": (1, 0), "L": (0, -1), "D": (-1, 0)}
 def compute_coords(path):
     current_position = (0, 0)
     total_steps = 0
-    cable = dict() # (x, y) -> steps
+    cable = dict()  # (x, y) -> steps
     for line in path:
         direction = line[0]
         steps = int(line[1:])

@@ -99,7 +99,7 @@ def next_position(position, direction):
 
 
 def move(vm, position, direction):
-    #XXX: this isn't ideal, we end up spending a lot of time doing copies of the vm
+    # XXX: this isn't ideal, we end up spending a lot of time doing copies of the vm
     vm = vm.copy()
 
     output = vm.run([direction])

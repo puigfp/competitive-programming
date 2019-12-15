@@ -21,8 +21,10 @@ def parse_line(line):
 def parse_file(s):
     return [parse_line(line) for line in s.splitlines()]
 
+
 def hash_dict(d):
     return hash(frozenset(d.items()))
+
 
 def is_transformation_doable(resources, transformation):
     input_, output = transformation
@@ -71,7 +73,11 @@ def solve_part1(transformations):
         doable_transformations = [
             t for t in transformations if is_transformation_doable(resources, t)
         ]
-        next_transformations = doable_transformations if len(doable_transformations) > 0 else transformations_ore
+        next_transformations = (
+            doable_transformations
+            if len(doable_transformations) > 0
+            else transformations_ore
+        )
         for transformation in next_transformations:
             next_state = do_transformation(state, transformation)
             if next_state[1] not in seen:

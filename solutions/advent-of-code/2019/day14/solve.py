@@ -60,6 +60,7 @@ def solve_part1(transformations, fuel=1):
             # no more chemicals to transform
             return resources[ORE]
 
+
 def solve_part2(transformations):
     # binary search
 
@@ -89,6 +90,7 @@ def solve_part2(transformations):
         return max_fuel
 
     return min_fuel
+
 
 if __name__ == "__main__":
     with open("input") as f:

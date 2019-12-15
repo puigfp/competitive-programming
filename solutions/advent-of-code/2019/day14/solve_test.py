@@ -69,11 +69,12 @@ def test_solve_part1():
             7 XCVML => 6 RJRHP
             5 BHXH, 4 VRPVC => 5 LTCX""",
             2210736,
-        )
+        ),
     ]
 
     for s, solution in tests:
         assert solve_part1(parse_file(s)) == solution
+
 
 def test_solve_part2():
     tests = [
@@ -123,7 +124,7 @@ def test_solve_part2():
             7 XCVML => 6 RJRHP
             5 BHXH, 4 VRPVC => 5 LTCX""",
             460664,
-        )
+        ),
     ]
 
     for s, solution in tests:
