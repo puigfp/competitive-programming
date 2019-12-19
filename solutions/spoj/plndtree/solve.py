@@ -1,27 +1,21 @@
 from collections import defaultdict, deque
 
 
-def add_word(a, b):
-    # a += b
-    # a, b: dict(letter -> count)
-    for letter, count in b.items():
-        a[letter] = a.get(letter, 0) + count
-        if a[letter] == 0:
-            del a[letter]
+def letter_to_word(letter):
+    return 1 << ord(letter) - ord("a")
 
 
-def remove_word(a, b):
-    # a -= b
-    # a, b: dict(letter -> count)
-    for letter, count in b.items():
-        a[letter] = a.get(letter, 0) - count
-        if a[letter] == 0:
-            del a[letter]
+def plus_words(a, b):
+    return a ^ b
+
+
+def is_palindrome(a):
+    return a == 0 or a - (a & -a) == 0
 
 
 class Fenwick:
     def __init__(self, l):
-        self.l = [dict() for _ in range(len(l) + 1)]
+        self.l = [0 for _ in range(len(l) + 1)]
         for i, x in enumerate(l):
             self.add(i, x)
 
@@ -30,15 +24,15 @@ class Fenwick:
         assert 0 <= i < len(self.l) - 1
         i += 1
         while i < len(self.l):
-            add_word(self.l[i], x)
+            self.l[i] = plus_words(self.l[i], x)
             i += i & -i
 
     def sum(self, i):
         # sum(l[:i])
         assert 0 <= i < len(self.l)
-        s = dict()
+        s = 0
         while i > 0:
-            add_word(s, self.l[i])
+            s = plus_words(s, self.l[i])
             i -= i & -i
         return s
 
@@ -47,27 +41,26 @@ class Fenwick:
         assert 0 <= i <= j < len(self.l)
         a = self.sum(j)
         b = self.sum(i)
-        remove_word(a, b)
-        return a
+        return plus_words(a, b)
 
 
 def flatten_tree(adj):
-    q = deque([1])
+    q = deque([0])
 
-    beg = dict()
-    end = dict()
+    beg = [None] * len(adj)
+    end = [None] * len(adj)
 
     i = 0
     while q:
         current = q.pop()
 
-        if current not in beg:
+        if beg[current] is None:
             beg[current] = i
             i += 1
 
             q.append(current)
             for neighbor in adj[current]:
-                if neighbor not in beg:
+                if beg[neighbor] is None:
                     q.append(neighbor)
 
         end[current] = i
@@ -79,14 +72,14 @@ if __name__ == "__main__":
     N = int(input())
 
     # read adjacency matrix
-    adj = defaultdict(list)
+    adj = [[] for _ in range(N)]
     for _ in range(N - 1):
         x, y = map(int, input().split())
-        adj[x].append(y)
-        adj[y].append(x)
+        adj[x - 1].append(y - 1)
+        adj[y - 1].append(x - 1)
 
     # debug purposes
-    for l in adj.values():
+    for l in adj:
         l.sort(reverse=True)
 
     # "flatten" tree
@@ -96,8 +89,8 @@ if __name__ == "__main__":
     letters = input()
     assert len(letters) == N
     l = [None] * N
-    for i, letter in zip(range(1, N + 1), letters):
-        l[beg[i]] = {letter: 1}
+    for i, letter in enumerate(letters):
+        l[beg[i]] = letter_to_word(letter)
     tree = Fenwick(l)
 
     M = int(input())
@@ -106,21 +99,18 @@ if __name__ == "__main__":
 
         # update tree
         if line[0] == "0":
-            i = int(line[1])
-            new_char = line[2]
+            i = int(line[1]) - 1
 
-            # retrieve current char from tree
-            current_value = tree.sum_range(beg[i], beg[i] + 1)
-            assert len(current_value) == 1
-            prev_char = next(iter(current_value.keys()))
+            new_char = letter_to_word(line[2])
+            prev_char = tree.sum_range(beg[i], beg[i] + 1)
 
             # no-op update edge case handling
             if new_char != prev_char:
-                tree.add(beg[i], {new_char: 1, prev_char: -1})
+                tree.add(beg[i], plus_words(new_char, prev_char))
 
         # palindrome check
         if line[0] == "1":
-            i = int(line[1])
+            i = int(line[1]) - 1
             letters = tree.sum_range(beg[i], end[i])
-            evens = sum(1 for count in letters.values() if count % 2 == 1)
-            print("YES" if evens in [0, 1] else "NO")
+            print("YES" if is_palindrome(letters) else "NO")
+
