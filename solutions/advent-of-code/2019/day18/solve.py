@@ -67,7 +67,11 @@ def get_accessible_keys(reduced_maze, keys, pos="@"):
             if next_pos in seen:
                 continue
             seen.add(next_pos)
-            if next_pos in ascii_uppercase and next_pos.lower() not in keys:
+            if (
+                next_pos in ascii_uppercase
+                and next_pos.lower() in reduced_maze  # part 2 splitting trick
+                and next_pos.lower() not in keys
+            ):
                 continue
             q.append(next_pos)
 
@@ -87,7 +91,7 @@ def compute_distances(maze):
             if maze[i][j] not in ["#", "."]:
                 positions[maze[i][j]] = (i, j)
 
-    def dfs(pos):
+    def bfs(pos):
         q = deque([(pos, 0)])
         seen = {pos}
         distances = {}
@@ -108,19 +112,18 @@ def compute_distances(maze):
 
         return distances
 
-    return positions, {key: dfs(pos) for key, pos in positions.items()}
+    return positions, {key: bfs(pos) for key, pos in positions.items()}
 
 
 def solve_part1(maze):
     # Dijkstra-like algorithm
 
-    maze = maze.strip().split("\n")
     positions, distances = compute_distances(maze)
     reduced_maze = reduce_maze(maze)
 
     total_keys = len([s for s in positions if s in ascii_lowercase])
 
-    q = [(0, ("@"), frozenset())]
+    q = [(0, "@", frozenset())]
     seen = set()
 
     while q:
@@ -150,22 +153,15 @@ def edited_maze_part2(maze):
     for i in range(len(maze)):
         for j in range(len(maze[0])):
             if maze[i][j] == "@":
-                maze[i][j] = "#"
-                maze[i + 1][j] = "#"
-                maze[i - 1][j] = "#"
-                maze[i][j + 1] = "#"
-                maze[i][j - 1] = "#"
-                maze[i - 1][j - 1] = "1"
-                maze[i - 1][j + 1] = "2"
-                maze[i + 1][j + 1] = "3"
-                maze[i + 1][j - 1] = "4"
+                maze[i - 1][j - 1 : j + 2] = ["1", "#", "2"]
+                maze[i][j - 1 : j + 2] = ["#", "#", "#"]
+                maze[i + 1][j - 1 : j + 2] = ["4", "#", "3"]
                 return ["".join(line) for line in maze]
 
 
 def solve_part2(maze):
     # Dijkstra-like algorithm
 
-    maze = maze.strip().split("\n")
     maze = edited_maze_part2(maze)
 
     positions, distances = compute_distances(maze)
@@ -210,9 +206,39 @@ def solve_part2(maze):
                 )
 
 
+def split_maze_part2(maze):
+    def find_center():
+        for i in range(len(maze)):
+            for j in range(len(maze[0])):
+                if maze[i][j] == "@":
+                    return i, j
+
+    i, j = find_center()
+    maze = [list(line) for line in maze]
+    maze[i - 1][j - 1 : j + 2] = ["@", "#", "@"]
+    maze[i][j - 1 : j + 2] = ["#", "#", "#"]
+    maze[i + 1][j - 1 : j + 2] = ["@", "#", "@"]
+    maze = ["".join(line) for line in maze]
+
+    return [
+        [line[: j + 1] for line in maze[: i + 1]],
+        [line[j:] for line in maze[: i + 1]],
+        [line[: j + 1] for line in maze[i:]],
+        [line[j:] for line in maze[i:]],
+    ]
+
+
+def solve_part2_split(maze):
+    # alternative solution for part 2
+
+    parts = split_maze_part2(maze)
+    return sum(solve_part1(part) for part in parts)
+
+
 if __name__ == "__main__":
     with open("input") as f:
         maze = f.read()
 
+    maze = maze.strip().split("\n")
     print(f"Part 1: {solve_part1(maze)}")
-    print(f"Part 2: {solve_part2(maze)}")
+    print(f"Part 2: {solve_part2_split(maze)}")

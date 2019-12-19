@@ -4,6 +4,7 @@ from solve import (
     compute_distances,
     solve_part1,
     solve_part2,
+    solve_part2_split,
 )
 
 
@@ -155,7 +156,7 @@ def test_solve_part1():
     ]
 
     for (maze, expected) in tests:
-        assert expected == solve_part1(maze)
+        assert expected == solve_part1(maze.strip().split("\n"))
 
 
 def test_solve_part2():
@@ -193,4 +194,34 @@ def test_solve_part2():
     ]
 
     for (maze, expected) in tests:
+        maze = maze.strip().split("\n")
         assert expected == solve_part2(maze)
+
+
+def test_solve_part2_split():
+    tests = [
+        (
+            """#######
+#a.#Cd#
+##...##
+##.@.##
+##...##
+#cB#Ab#
+#######""",
+            8,
+        ),
+        (
+            """###############
+#d.ABC.#.....a#
+######...######
+######.@.######
+######...######
+#b.....#.....c#
+###############""",
+            24,
+        ),
+    ]
+
+    for (maze, expected) in tests:
+        maze = maze.strip().split("\n")
+        assert expected == solve_part2_split(maze)
