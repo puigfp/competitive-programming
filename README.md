@@ -27,3 +27,32 @@ I also find taking a look at the code coverage useful. It allows me to make sure
 This repo replaces the previous repo I was using for this purpose: https://github.com/puigfp/ProblemSolvingPython
 
 This repo was literally the first Git repo I every pushed code to. This means most stuff is in French (notes about the problems, commit messages and even the function/variable names in some solutions). The code isn't the prettiest code I've ever written...
+
+## Cheatsheet
+
+- tests
+
+    ```sh
+    poetry run pytest -vv -s
+    ```
+
+    or, to filter the tests by name
+
+    ```sh
+    poetry run pytest -vv -s -k test_name
+    ```
+
+- profiling
+
+    ```sh
+    poetry run python -m cProfile -s cumtime solve.py
+    ```
+
+    or
+
+    ```sh
+    poetry run python -m cProfile -o prof.cprof solve.py
+    poetry run pyprof2calltree -k -i prof.cprof
+    ```
+
+    cf. https://docs.python.org/3/library/profile.html
