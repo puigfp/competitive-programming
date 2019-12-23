@@ -1,6 +1,12 @@
 import math
 
-from solve import parse_input, apply_operations, euclid, apply_operations_alt
+from solve import (
+    parse_input,
+    apply_operations,
+    euclid,
+    operation_to_affine_transformation,
+    merge_affine_transformations,
+)
 
 
 def test_apply_operations():
@@ -37,11 +43,23 @@ cut -1
     for s, result in tests:
         operations = parse_input(s)
         result = [int(s) for s in result.split()]
-        deck = list(range(len(result)))
-        assert apply_operations(deck, operations) == result
-        assert [
-            apply_operations_alt(position, len(deck), operations) for position in deck
-        ] == result
+        length = len(result)
+
+        # naive algorithm
+        assert apply_operations(list(range(length)), operations) == result
+
+        # merged affine transformations
+        a, b = merge_affine_transformations(
+            [
+                operation_to_affine_transformation(operation, length)
+                for operation in operations
+            ],
+            length,
+        )
+        deck = [0] * length
+        for position in range(len(deck)):
+            deck[(a * position + b) % len(deck)] = position
+        assert deck == result
 
 
 def test_euclid():
