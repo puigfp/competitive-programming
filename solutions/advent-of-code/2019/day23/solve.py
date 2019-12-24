@@ -15,13 +15,13 @@ class IntCodeVM:
         7: ("less_than", (VAL, VAL, PTR)),
         8: ("equals", (VAL, VAL, PTR)),
         9: ("relative_base_incr", (VAL,)),
+        99: ("halt", tuple()),
     }
 
     def __init__(self, program):
         self.memory = defaultdict(int, {i: elem for i, elem in enumerate(program)})
         self.instr_ptr = 0
         self.relative_base = 0
-        self.blocked_stdin = False
         self.stdin = deque()
         self.stdout = deque()
 
@@ -62,62 +62,58 @@ class IntCodeVM:
 
     def run(self):
         while not self.stopped:
-            opcode, modes = self.parse_instr(self.memory[self.instr_ptr])
+            opcode, arg_modes = self.parse_instr(self.memory[self.instr_ptr])
             instr_name, arg_types = self.INSTRS[opcode]
 
             args = [
                 self.arg(n, arg_type, arg_mode)
-                for n, (arg_type, arg_mode) in enumerate(zip(arg_types, modes))
+                for n, (arg_type, arg_mode) in enumerate(zip(arg_types, arg_modes))
             ]
 
-            getattr(self, f"op_{instr_name}")(args)  # self.op_XXX(args)
-
-            if self.blocked_stdin:
+            next_instr_ptr = getattr(self, f"op_{instr_name}")(args)
+            if next_instr_ptr is None:
                 return
+
+            self.instr_ptr = next_instr_ptr
 
     def op_plus(self, args):
         self.memory[args[2]] = args[0] + args[1]
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
 
     def op_mul(self, args):
         self.memory[args[2]] = args[0] * args[1]
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
 
     def op_input(self, args):
-        if self.stdin:
-            self.memory[args[0]] = self.stdin.popleft()
-            self.instr_ptr += len(args) + 1
-            self.blocked_stdin = False
-        else:
-            self.blocked_stdin = True
+        if not self.stdin:
+            return
+        self.memory[args[0]] = self.stdin.popleft()
+        return self.instr_ptr + len(args) + 1
 
     def op_output(self, args):
         self.stdout.append(args[0])
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
 
     def op_jump_if_true(self, args):
-        if args[0] != 0:
-            self.instr_ptr = args[1]
-        else:
-            self.instr_ptr += len(args) + 1
+        return args[1] if args[0] != 0 else self.instr_ptr + len(args) + 1
 
     def op_jump_if_false(self, args):
-        if args[0] == 0:
-            self.instr_ptr = args[1]
-        else:
-            self.instr_ptr += len(args) + 1
+        return args[1] if args[0] == 0 else self.instr_ptr + len(args) + 1
 
     def op_less_than(self, args):
         self.memory[args[2]] = 1 if args[0] < args[1] else 0
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
 
     def op_equals(self, args):
         self.memory[args[2]] = 1 if args[0] == args[1] else 0
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
 
     def op_relative_base_incr(self, args):
         self.relative_base += args[0]
-        self.instr_ptr += len(args) + 1
+        return self.instr_ptr + len(args) + 1
+
+    def op_halt(self, args):
+        return
 
 
 def solve_part1(program):
@@ -131,7 +127,7 @@ def solve_part1(program):
         for i, vm in enumerate(vms):
             assert vm.stopped == False
 
-            if vm.blocked_stdin and not vm.stdin:
+            if not vm.stopped and not vm.stdin:
                 vm.stdin.append(-1)
 
             vm.run()
@@ -160,7 +156,7 @@ def solve_part2(program):
         for i, vm in enumerate(vms):
             assert vm.stopped == False
 
-            if vm.blocked_stdin and not vm.stdin:
+            if not vm.stopped and not vm.stdin:
                 vm.stdin.append(-1)
             else:
                 idle = False

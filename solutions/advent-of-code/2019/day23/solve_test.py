@@ -43,11 +43,11 @@ def test_execute():
         vm = IntCodeVM(program)
         vm.stdin.extend(stdin)
         vm.run()
-        assert vm.blocked_stdin == False
+        assert vm.stopped == True
         assert list(vm.stdout) == expected_stdout
 
     vm = IntCodeVM([1102, 34915192, 34915192, 7, 4, 7, 99, 0])
     vm.run()
-    assert vm.blocked_stdin == False
+    assert vm.stopped == True
     assert len(vm.stdout) == 1
     assert len(str(vm.stdout[0])) == 16
