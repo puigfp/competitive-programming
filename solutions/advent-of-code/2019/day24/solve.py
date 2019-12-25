@@ -72,10 +72,9 @@ def print_state(state):
 
 def solve_part2(state, minutes=200):
     state = state.reshape(-1, 5, 5)
+    state_shape = state.shape
     state = np.vstack(
-        [np.zeros_like(state) for _ in range(minutes // 2)]
-        + [state]
-        + [np.zeros_like(state) for _ in range(minutes // 2)]
+        [np.zeros(state_shape, dtype=int), state, np.zeros(state_shape, dtype=int)]
     )
 
     for _ in range(minutes):
@@ -84,6 +83,11 @@ def solve_part2(state, minutes=200):
         to_one = (state == 0) * ((bugs == 1) + (bugs == 2))
         state[to_zero] = 0
         state[to_one] = 1
+        # extend state if necessary
+        if 1 in state[0, :, :]:
+            state = np.vstack([np.zeros(state_shape, dtype=int), state])
+        if 1 in state[-1, :, :]:
+            state = np.vstack([state, np.zeros(state_shape, dtype=int)])
 
     return state.sum()
 
