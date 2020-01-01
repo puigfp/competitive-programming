@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "start": "ts-node",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.1.2",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "why-is-node-running": "^2.1.0"
+  }
+}
