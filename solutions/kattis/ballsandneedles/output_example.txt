@@ -1,0 +1,8 @@
+No true closed chains
+Floor closed chains
+True closed chains
+No floor closed chains
+No true closed chains
+No floor closed chains
+True closed chains
+Floor closed chains
