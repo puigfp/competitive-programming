@@ -1,11 +1,11 @@
-# macOS stuff
-.DS_Store
-
-# python stuff
+# python
 /.venv/
 .pytest_cache/
 __pycache__/
 
-# code coverage data
+# python code coverage data
 .coverage
 htmlcov/
+
+# rust
+target/
